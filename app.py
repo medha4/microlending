@@ -162,5 +162,18 @@ def runanalysis():
 
         res = analysis.predict(float(age),float(ed),float(employ),float(address),float(income),float(debtinc),float(creddebt),float(othdebt))
         if int(res) == 0:
-            return "will not default"
-        return "will default"
+            props = {
+                "result" : "will not default"
+            }
+        else:
+            props = {
+                "result" : "will default"
+            }
+        return render_template("analysisdecision.html", props=props)
+
+@app.route('/invest', methods = ['GET', 'POST'])
+def invest():
+    if request.method == 'GET':
+        return "you are getting some info"
+    else:
+        return request.form['investment']
