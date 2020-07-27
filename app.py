@@ -7,6 +7,7 @@ from bson.objectid import ObjectId
 import os
 from flask_pymongo import PyMongo
 from flask import session
+import analysis
 
 # -- Initialization section --
 app = Flask(__name__)
@@ -106,3 +107,60 @@ def user(id):
     currUser= list(users_collection.find({'_id':ObjectId(id)}))
 
     return render_template("userview.html", curr_user=currUser[0])
+
+@app.route('/updateinfo', methods = ['GET', 'POST'])
+def updateinfo():
+    if request.method == 'GET':
+        return "you are getting some info"
+    else:
+        userinfo = mongo.db.userinfo
+        username = session['username']
+        age = request.form['age']
+        ed = request.form['ed']
+        employ = request.form['employ']
+        address = request.form['address']
+        income = request.form['income']
+        debtinc = request.form['debtinc']
+        creddebt = request.form['creddebt']
+        othdebt = request.form['othdebt']
+
+        if not list(userinfo.find({'username':username})):
+            userinfo.insert({"username" : username,"age": age,"ed":ed,"employ":employ,"address":address,"income":income,"debtinc":debtinc,"creddebt":creddebt,"othdebt":othdebt})
+            return "submitted"
+        else:
+            # idofuser = list(userinfo.find({'username':username})[0]['_id']
+            userinfo.update(
+                { 'username': username },
+                { "$set":
+                    {
+                        "age": age,"ed":ed,"employ":employ,"address":address,"income":income,"debtinc":debtinc,"creddebt":creddebt,"othdebt":othdebt
+                    }
+                }
+                )
+            return "updated"
+
+@app.route('/runanalysis', methods = ['GET', 'POST'])
+def runanalysis():
+    # userinfo = list(userinfo.find({'username':username}))
+    if request.method == 'GET':
+        return "you are getting some info"
+    else:
+        user_for_val = request.form["username"]
+        userinfo = mongo.db.userinfo
+
+        userls = list(userinfo.find({'username':user_for_val}))[0]
+
+        age = userls['age']
+        ed = userls['ed']
+        employ = userls['employ']
+        address = userls['address']
+        income = userls['income']
+        debtinc = userls['debtinc']
+        creddebt = userls['creddebt']
+        othdebt = userls['othdebt']
+
+
+        res = analysis.predict(float(age),float(ed),float(employ),float(address),float(income),float(debtinc),float(creddebt),float(othdebt))
+        if int(res) == 0:
+            return "will not default"
+        return "will default"

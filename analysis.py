@@ -277,7 +277,7 @@ def predict(age,ed,employ,address,income,debtinc,creddebt,othdebt):
 
 # variables:
 # age - Age of Customer
-# ed - Eductation level of customer
+# ed - Education level of customer
 # employ: Tenure with current employer (in years)
 # address: Number of years in same address
 # income: Customer Income
