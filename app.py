@@ -7,6 +7,7 @@ from bson.objectid import ObjectId
 import os
 from flask_pymongo import PyMongo
 from flask import session
+import analysis
 
 # -- Initialization section --
 app = Flask(__name__)
@@ -74,7 +75,12 @@ def investlogintomongo():
 
 @app.route('/userhomepage')
 def userhomepage():
-    return render_template("userhomepage.html")
+    userinfo = mongo.db.userinfo
+    money = list(userinfo.find({'username':session['username']}))[0]['invested']
+    props = {
+        "money":money
+    }
+    return render_template("userhomepage.html",props=props)
 
 @app.route('/userlogintomongo', methods = ['GET', 'POST'])
 def userlogintomongo():
@@ -106,3 +112,95 @@ def user(id):
     currUser= list(users_collection.find({'_id':ObjectId(id)}))
 
     return render_template("userview.html", curr_user=currUser[0])
+
+@app.route('/updateinfo', methods = ['GET', 'POST'])
+def updateinfo():
+    if request.method == 'GET':
+        return "you are getting some info"
+    else:
+        userinfo = mongo.db.userinfo
+        username = session['username']
+        age = request.form['age']
+        ed = request.form['ed']
+        employ = request.form['employ']
+        address = request.form['address']
+        income = request.form['income']
+        debtinc = request.form['debtinc']
+        creddebt = request.form['creddebt']
+        othdebt = request.form['othdebt']
+
+        if not list(userinfo.find({'username':username})):
+            userinfo.insert({"username" : username,"age": age,"ed":ed,"employ":employ,"address":address,"income":income,"debtinc":debtinc,"creddebt":creddebt,"othdebt":othdebt,"invested":0})
+            return "submitted"
+        else:
+            # idofuser = list(userinfo.find({'username':username})[0]['_id']
+            userinfo.update(
+                { 'username': username },
+                { "$set":
+                    {
+                        "age": age,"ed":ed,"employ":employ,"address":address,"income":income,"debtinc":debtinc,"creddebt":creddebt,"othdebt":othdebt
+                    }
+                }
+                )
+            return "updated"
+
+@app.route('/runanalysis', methods = ['GET', 'POST'])
+def runanalysis():
+    # userinfo = list(userinfo.find({'username':username}))
+    if request.method == 'GET':
+        return "you are getting some info"
+    else: 
+        user_for_val = request.form["username"]
+        userinfo = mongo.db.userinfo
+
+        userls = list(userinfo.find({'username':user_for_val}))[0]
+
+        age = userls['age']
+        ed = userls['ed']
+        employ = userls['employ']
+        address = userls['address']
+        income = userls['income']
+        debtinc = userls['debtinc']
+        creddebt = userls['creddebt']
+        othdebt = userls['othdebt']
+
+
+        res = analysis.predict(float(age),float(ed),float(employ),float(address),float(income),float(debtinc),float(creddebt),float(othdebt))
+        if int(res) == 0:
+            props = {
+                "result" : "will not default",
+                "username":user_for_val
+            }
+        else:
+            props = {
+                "result" : "will default",
+                "username":user_for_val
+            }
+        return render_template("analysisdecision.html", props=props)
+
+@app.route('/invest', methods = ['GET', 'POST'])
+def invest():
+    if request.method == 'GET':
+        return "you are getting some info"
+    else:
+        username = request.form['username']
+        userinfo = mongo.db.userinfo
+        curr_money = list(userinfo.find({'username':username}))[0]['invested']
+        new_money = int(curr_money) + int(request.form['investment'])
+        userinfo.update(
+                { 'username': username },
+                { "$set":
+                    {
+                        "invested": new_money
+                    }
+                }
+                )
+        
+        investorinfo = mongo.db.investorinfo
+        investorinfo.insert({"investor": session['username'], "project" : username,"invested":request.form['investment']})
+        return f"you have offered to invest ${str(request.form['investment'])} into {request.form['username']}"
+
+# testing block content just for funzies - ignore the test.html and base.html files in template for now
+# @app.route('/test')
+# def test():
+#     return render_template("test.html")

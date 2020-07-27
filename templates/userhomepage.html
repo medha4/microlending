@@ -3,7 +3,27 @@
         <title>User Home</title>
     </head>
     <body>
+        <h1>investments</h1>
+        <p>you have been offered ${{props.money}} in investments so far</p>
         <h1>Update your info</h1>
-        <p>info form<p>
+        <form method="POST" action="/updateinfo">
+        <label for="age">Age:</label><br>  <!--age - Age of Customer-->
+        <input type="text" id="age" name="age"><br> 
+        <label for="ed">Education Level:</label><br><!--ed - Education level of customer-->
+        <input type="text" id="ed" name="ed"><br>
+        <label for="employ">Tenure with current employer (in years):</label><br><!-- # employ: Tenure with current employer (in years) -->
+        <input type="text" id="employ" name="employ"><br>
+        <label for="address">Number of years in same address:</label><br><!-- # address: Number of years in same address -->
+        <input type="text" id="address" name="address"><br>
+        <label for="income">Income:</label><br> <!-- # income: Customer Income -->
+        <input type="text" id="income" name="income"><br>
+        <label for="debtinc">Debt to Income Ratio:</label><br> <!-- # debtinc: Debt to income ratio -->
+        <input type="text" id="debtinc" name="debtinc"><br>
+        <label for="creddebt">Credit to Debt Ratio:</label><br> <!-- # creddebt: Credit to Debt ratio -->
+        <input type="text" id="creddebt" name="creddebt"><br>
+        <label for="othdebt">Other debts:</label><br> <!-- # othdebt: Other debts -->
+        <input type="text" id="othdebt" name="othdebt"><br>
+        <input type="submit" value="Submit">
+        </form>
     </body>
 </html>

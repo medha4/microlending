@@ -3,7 +3,12 @@
         <title>User</title>
     </head>
     <body>
-      <h1>{{curr_user.username}} - {{curr_user.password}}</h1>
+      <h1>{{curr_user.username}}</h1>
+      <form method="POST" action="/runanalysis">
+        <label for="uservalue">Username</label>
+        <input required type="text" name="username" value="">
+        <input type="submit" value="Run Credit Risk Analysis for {{curr_user.username}}">
+      </form>
     </body>
 
 </html>
