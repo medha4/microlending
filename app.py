@@ -8,6 +8,13 @@ import os
 from flask_pymongo import PyMongo
 from flask import session
 import analysis
+import bcrypt
+
+#NOTES:
+# things to do:
+# - show all the investors on the users page
+# - allow investor to add more money to his or her investment
+
 
 # -- Initialization section --
 app = Flask(__name__)
@@ -60,13 +67,12 @@ def investlogintomongo():
         return "you are getting some info"
     else:
         if not list(investors.find({'username':given_username})):
-            #investors.insert({"username" : given_username,"password": str(given_password,'utf-8')})
-            investors.insert({"username" : given_username,"password": given_password})
+            investors.insert({"username" : given_username,"password": str(bcrypt.hashpw(given_password.encode('utf-8'), bcrypt.gensalt()), "utf-8")})
             session['username'] = given_username
             return investorhomepage()
         else:
-            #if list(investors.find({'username':given_username}))[0]['password'] == str(given_password,'utf-8'):
-            if list(investors.find({'username':given_username}))[0]['password'] == given_password:
+            pwfromdata = list(investors.find({'username':given_username}))[0]['password']
+            if bcrypt.checkpw(given_password.encode("utf-8"), pwfromdata.encode("utf-8")):
                 session['username'] = given_username
                 return investorhomepage()
             else:
@@ -86,20 +92,21 @@ def userhomepage():
 def userlogintomongo():
     users = mongo.db.users
     given_username = request.form['username']
-    #given_password = bcrypt.hashpw(request.form['password'].encode("utf-8"),bcrypt.gensalt())
     given_password = request.form['password']
-    print(given_password)
+
+    userinfo = mongo.db.userinfo
+
     if request.method == 'GET':
         return "you are getting some info"
     else:
         if not list(users.find({'username':given_username})):
-            #users.insert({"username" : given_username,"password": str(given_password,'utf-8')})
-            users.insert({"username" : given_username,"password": given_password})
+            users.insert({"username" : given_username,"password": str(bcrypt.hashpw(given_password.encode('utf-8'), bcrypt.gensalt()), "utf-8")})
+            userinfo.insert({"username" : given_username,"age": 0,"ed":0,"employ":0,"address":0,"income":0,"debtinc":0,"creddebt":0,"othdebt":0,"invested":0})
             session['username'] = given_username
             return userhomepage()
         else:
-            #if list(users.find({'username':given_username}))[0]['password'] == str(given_password,'utf-8'):
-            if list(users.find({'username':given_username}))[0]['password'] == given_password:
+            pwfromdata = list(users.find({'username':given_username}))[0]['password']
+            if bcrypt.checkpw(given_password.encode("utf-8"), pwfromdata.encode("utf-8")):
                 session['username'] = given_username
                 return userhomepage()
             else:
@@ -110,7 +117,7 @@ def userlogintomongo():
 def user(id):
     users_collection = mongo.db.users
     currUser= list(users_collection.find({'_id':ObjectId(id)}))
-
+    session['currentuser'] = currUser[0]['username']
     return render_template("userview.html", curr_user=currUser[0])
 
 @app.route('/updateinfo', methods = ['GET', 'POST'])
@@ -146,47 +153,43 @@ def updateinfo():
 
 @app.route('/runanalysis', methods = ['GET', 'POST'])
 def runanalysis():
-    # userinfo = list(userinfo.find({'username':username}))
-    if request.method == 'GET':
-        return "you are getting some info"
-    else: 
-        user_for_val = request.form["username"]
-        userinfo = mongo.db.userinfo
+    user_for_val = session['currentuser']
+    userinfo = mongo.db.userinfo
 
-        userls = list(userinfo.find({'username':user_for_val}))[0]
+    userls = list(userinfo.find({'username':user_for_val}))[0]
 
-        age = userls['age']
-        ed = userls['ed']
-        employ = userls['employ']
-        address = userls['address']
-        income = userls['income']
-        debtinc = userls['debtinc']
-        creddebt = userls['creddebt']
-        othdebt = userls['othdebt']
+    age = userls['age']
+    ed = userls['ed']
+    employ = userls['employ']
+    address = userls['address']
+    income = userls['income']
+    debtinc = userls['debtinc']
+    creddebt = userls['creddebt']
+    othdebt = userls['othdebt']
 
 
-        res = analysis.predict(float(age),float(ed),float(employ),float(address),float(income),float(debtinc),float(creddebt),float(othdebt))
-        if int(res) == 0:
-            props = {
-                "result" : "will not default",
-                "username":user_for_val
-            }
-        else:
-            props = {
-                "result" : "will default",
-                "username":user_for_val
-            }
-        return render_template("analysisdecision.html", props=props)
+    res = analysis.predict(float(age),float(ed),float(employ),float(address),float(income),float(debtinc),float(creddebt),float(othdebt))
+    if int(res) == 0:
+        props = {
+            "result" : "will not default",
+            "username":user_for_val
+        }
+    else:
+        props = {
+            "result" : "will default",
+            "username":user_for_val
+        }
+    return render_template("analysisdecision.html", props=props)
 
 @app.route('/invest', methods = ['GET', 'POST'])
 def invest():
     if request.method == 'GET':
         return "you are getting some info"
     else:
-        username = request.form['username']
+        username = session['currentuser']
         userinfo = mongo.db.userinfo
         curr_money = list(userinfo.find({'username':username}))[0]['invested']
-        new_money = int(curr_money) + int(request.form['investment'])
+        new_money = float(curr_money) + float(request.form['investment'])
         userinfo.update(
                 { 'username': username },
                 { "$set":
@@ -196,11 +199,31 @@ def invest():
                 }
                 )
         
-        investorinfo = mongo.db.investorinfo
-        investorinfo.insert({"investor": session['username'], "project" : username,"invested":request.form['investment']})
-        return f"you have offered to invest ${str(request.form['investment'])} into {request.form['username']}"
+        investorinfo = mongo.db.investorinfo #FIX THE MULTIPLE INVESTMENT THING
+        if not list(userinfo.find({'project':username, 'investor':session['username']})):
+            investorinfo.insert({"investor": session['username'], "project" : username,"invested":request.form['investment']})
+        else:
+            print(updating)
+            currentinvestment = float(list(userinfo.find({'project':username, 'investor':session['username']}))[0]['invested'])
+            total = currentinvestment + float(request.form['investment'])
+            investorinfo.update(
+                { 'project': username , 'investor': session['username']},
+                { "$set":
+                    {
+                        "invested": total
+                    }
+                }
+                )
+        return f"you have offered to invest ${str(request.form['investment'])} into {username}"
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return render_template('index.html')
 
 # testing block content just for funzies - ignore the test.html and base.html files in template for now
+# documentation: https://jinja.palletsprojects.com/en/2.11.x/templates/#child-template
 # @app.route('/test')
 # def test():
 #     return render_template("test.html")
