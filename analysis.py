@@ -7,6 +7,7 @@ import statsmodels.formula.api as sm
 import scipy.stats as stats
 import pandas_profiling   #need to install using anaconda prompt (pip install pandas_profiling)
 
+#change/diversify dataset https://www.listendata.com/2019/08/datasets-for-credit-risk-modeling.html
 
 #show auc roc curve to be cool - shows false postivites - can export it as html or as an image - model won't change
 
@@ -135,7 +136,7 @@ def predict(age,ed,employ,address,income,debtinc,creddebt,othdebt):
     train_features = bankloans_existing.columns.difference(['default'])
     train_X, test_X = train_test_split(bankloans_existing, test_size=0.3, random_state=42)
 
-    print(test_X)
+    #print(test_X)
 
     # print(train_X.columns)
 
@@ -259,7 +260,7 @@ def predict(age,ed,employ,address,income,debtinc,creddebt,othdebt):
     hr_test_pred['new_labels'] = hr_test_pred['Left_1'].map( lambda x: 1 if x >= cutoff_prob else 0 )
 
     # print("The overall accuracy score for the Train Data is : ", round(metrics.accuracy_score(train_sk_Y, logisticRegr.predict(train_sk_X)),2))
-    print("The overall accuracy score for the Test Data is : ", round(metrics.accuracy_score(test_sk_Y, logisticRegr.predict(test_sk_X)),2))
+    # print("The overall accuracy score for the Test Data is : ", round(metrics.accuracy_score(test_sk_Y, logisticRegr.predict(test_sk_X)),2))
 
 
     #actual prediction
@@ -286,3 +287,4 @@ def predict(age,ed,employ,address,income,debtinc,creddebt,othdebt):
 # default: Customer defaulted in the past (1= defaulted, 0=Never defaulted)
 
 
+print(predict(22,1,5,5,40000,10000,500,100))

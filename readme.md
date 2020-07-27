@@ -1,1 +1,2 @@
 # Credit Risk Analysis Calculator - User and Investor Interface
+Credit Risk Analysis algorithm inspired by https://www.kaggle.com/karanagarwal/credit-risk-analysis?fbclid=IwAR04Wm2d9s1hxJmv8Ratf20BBcIPdJbvqnh0XkucT7Lze7cVvvIfHYmz1Hg

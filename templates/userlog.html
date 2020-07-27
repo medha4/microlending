@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <title>User Log In/Sign Up</title>
+    </head>
+    <body>
+        <h1>User Log In/Sign Up</h1>
+        <p>{{session['error']}}<p>
+        <form method="POST" action="/userlogintomongo">
+            <label for="event_name">Username</label>
+            <input required type="text" name="username" vaue="">
+            <label for="event_date">Password </label>
+            <input required type="text" name="password" vaue="">
+            <input type="submit" value="Submit">
+        </form>
+    </body>
+</html>
