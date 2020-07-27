@@ -4,8 +4,10 @@
     </head>
     <body>
       <h1>Decision</h1>
-      <p>{{props.result}}</p>
+      <p>{{props.username}} {{props.result}}</p>
       <form method="POST" action="/invest">
+            <label for="uservalue">Username</label>
+            <input required type="text" name="username" value="">
             <label for="investment">Investment Value:</label><br> 
             <input type="text" id="investment" name="investment"><br>
             <input type="submit" value="Invest">

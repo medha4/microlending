@@ -75,7 +75,12 @@ def investlogintomongo():
 
 @app.route('/userhomepage')
 def userhomepage():
-    return render_template("userhomepage.html")
+    userinfo = mongo.db.userinfo
+    money = list(userinfo.find({'username':session['username']}))[0]['invested']
+    props = {
+        "money":money
+    }
+    return render_template("userhomepage.html",props=props)
 
 @app.route('/userlogintomongo', methods = ['GET', 'POST'])
 def userlogintomongo():
@@ -125,7 +130,7 @@ def updateinfo():
         othdebt = request.form['othdebt']
 
         if not list(userinfo.find({'username':username})):
-            userinfo.insert({"username" : username,"age": age,"ed":ed,"employ":employ,"address":address,"income":income,"debtinc":debtinc,"creddebt":creddebt,"othdebt":othdebt})
+            userinfo.insert({"username" : username,"age": age,"ed":ed,"employ":employ,"address":address,"income":income,"debtinc":debtinc,"creddebt":creddebt,"othdebt":othdebt,"invested":0})
             return "submitted"
         else:
             # idofuser = list(userinfo.find({'username':username})[0]['_id']
@@ -144,7 +149,7 @@ def runanalysis():
     # userinfo = list(userinfo.find({'username':username}))
     if request.method == 'GET':
         return "you are getting some info"
-    else:
+    else: 
         user_for_val = request.form["username"]
         userinfo = mongo.db.userinfo
 
@@ -163,11 +168,13 @@ def runanalysis():
         res = analysis.predict(float(age),float(ed),float(employ),float(address),float(income),float(debtinc),float(creddebt),float(othdebt))
         if int(res) == 0:
             props = {
-                "result" : "will not default"
+                "result" : "will not default",
+                "username":user_for_val
             }
         else:
             props = {
-                "result" : "will default"
+                "result" : "will default",
+                "username":user_for_val
             }
         return render_template("analysisdecision.html", props=props)
 
@@ -176,4 +183,24 @@ def invest():
     if request.method == 'GET':
         return "you are getting some info"
     else:
-        return request.form['investment']
+        username = request.form['username']
+        userinfo = mongo.db.userinfo
+        curr_money = list(userinfo.find({'username':username}))[0]['invested']
+        new_money = int(curr_money) + int(request.form['investment'])
+        userinfo.update(
+                { 'username': username },
+                { "$set":
+                    {
+                        "invested": new_money
+                    }
+                }
+                )
+        
+        investorinfo = mongo.db.investorinfo
+        investorinfo.insert({"investor": session['username'], "project" : username,"invested":request.form['investment']})
+        return f"you have offered to invest ${str(request.form['investment'])} into {request.form['username']}"
+
+# testing block content just for funzies - ignore the test.html and base.html files in template for now
+# @app.route('/test')
+# def test():
+#     return render_template("test.html")
