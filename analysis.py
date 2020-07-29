@@ -103,21 +103,22 @@ def predict(age,ed,employ,address,income,debtinc,creddebt,othdebt):
     #     plt.title(str('Default Split Density Plot of ')+str(num_variable))
     #     plt.legend()
 
-    bp = PdfPages('Transformation Plots.pdf')
+    # bp = PdfPages('Transformation Plots.pdf')
 
-    for num_variable in bankloans_existing.columns.difference(['default']):
-        binned = pd.cut(bankloans_existing[num_variable], bins=10, labels=list(range(1,11)))
-        binned = binned.dropna()
-        ser = bankloans_existing.groupby(binned)['default'].sum() / (bankloans_existing.groupby(binned)['default'].count()-bankloans_existing.groupby(binned)['default'].sum())
-        if ser > 0:
-            ser = np.log(ser)
-        fig,axes = plt.subplots(figsize=(10,4))
-        sns.barplot(x=ser.index,y=ser)
-        plt.ylabel('Log Odds Ratio')
-        plt.title(str('Logit Plot for identifying if the bucketing is required or not for variable ') + str(num_variable))
-        bp.savefig(fig)
+    # for num_variable in bankloans_existing.columns.difference(['default']):
+    #     binned = pd.cut(bankloans_existing[num_variable], bins=10, labels=list(range(1,11)))
+    #     binned = binned.dropna()
+    #     # ser = bankloans_existing.groupby(binned)['default'].sum() / (bankloans_existing.groupby(binned)['default'].count()-bankloans_existing.groupby(binned)['default'].sum())
+    #     # if ser > 0:
+    #     #     ser = np.log(ser)
+    #     ser = 0
+    #     fig,axes = plt.subplots(figsize=(10,4))
+    #     sns.barplot(x=ser.index,y=ser)
+    #     plt.ylabel('Log Odds Ratio')
+    #     plt.title(str('Logit Plot for identifying if the bucketing is required or not for variable ') + str(num_variable))
+    #     bp.savefig(fig)
 
-    bp.close()
+    # bp.close()
 
     # print('These variables need bucketing - creddebt, othdebt, debtinc, employ, income ')
     # print(bankloans_existing.columns)
