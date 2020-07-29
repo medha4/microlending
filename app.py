@@ -90,12 +90,17 @@ def userhomepage():
     moneyreq = list(userinfo.find({'username':session['username']}))[0]['moneyreq']
     investorinfo = mongo.db.investorinfo
     investorsforcurruser = list(investorinfo.find({'project':session['username']}))
+
+    progress_percent = 0.0
+    if float(moneyreq) > 0.0:
+        progress_percent = float(money)/float(moneyreq) * 100
+
     props = {
         "money":"${:,.2f}".format(money),
         "investorslist":investorsforcurruser,
         "numinvestors":len(investorsforcurruser),
         "moneyreq":"${:,.2f}".format(int(moneyreq)),
-        "progress": float(money)/float(moneyreq) * 100
+        "progress": progress_percent
     }
     return render_template("userhomepage.html",props=props)
 
@@ -124,12 +129,12 @@ def userlogintomongo():
                 session['error'] = "username already taken"
                 return render_template('userlog.html')
 
-@app.route('/user/<id>')
-def user(id):
-    users_collection = mongo.db.users
-    currUser= list(users_collection.find({'_id':ObjectId(id)}))
-    session['currentuser'] = currUser[0]['username']
-    return render_template("userview.html", curr_user=currUser[0])
+# @app.route('/user/<id>')
+# def user(id):
+#     users_collection = mongo.db.users
+#     currUser= list(users_collection.find({'_id':ObjectId(id)}))
+#     session['currentuser'] = currUser[0]['username']
+#     return render_template("userview.html", curr_user=currUser[0])
 
 @app.route('/updateinfo', methods = ['GET', 'POST'])
 def updateinfo():
@@ -147,6 +152,7 @@ def updateinfo():
         creddebt = request.form['creddebt']
         othdebt = request.form['othdebt']
         moneyreq = request.form['moneyyouwant']
+
 
         if not list(userinfo.find({'username':username})):
             userinfo.insert({"username" : username,"age": age,"ed":ed,"employ":employ,"address":address,"income":income,"debtinc":debtinc,"creddebt":creddebt,"othdebt":othdebt,"invested":0,"moneyreq":moneyreq})
@@ -167,33 +173,42 @@ def updateinfo():
 
 @app.route('/runanalysis', methods = ['GET', 'POST'])
 def runanalysis():
-    user_for_val = session['currentuser']
-    userinfo = mongo.db.userinfo
-
-    userls = list(userinfo.find({'username':user_for_val}))[0]
-
-    age = userls['age']
-    ed = userls['ed']
-    employ = userls['employ']
-    address = userls['address']
-    income = userls['income']
-    debtinc = userls['debtinc']
-    creddebt = userls['creddebt']
-    othdebt = userls['othdebt']
-
-
-    res = analysis.predict(float(age),float(ed),float(employ),float(address),float(income),float(debtinc),float(creddebt),float(othdebt))
-    if int(res) == 0:
-        props = {
-            "result" : "will not default",
-            "username":user_for_val
-        }
+    if request.method == 'GET':
+        return "you are getting some info"
     else:
-        props = {
-            "result" : "will default",
-            "username":user_for_val
-        }
-    return render_template("analysisdecision.html", props=props)
+        user_for_val = request.form['users']
+        session['currentuser'] = user_for_val
+        userinfo = mongo.db.userinfo
+
+        userls = list(userinfo.find({'username':user_for_val}))[0]
+
+        age = userls['age']
+        ed = userls['ed']
+        employ = userls['employ']
+        address = userls['address']
+        income = userls['income']
+        debtinc = userls['debtinc']
+        creddebt = userls['creddebt']
+        othdebt = userls['othdebt']
+
+        users_collection=mongo.db.users
+        userdict= list(users_collection.find({}))
+
+        res = analysis.predict(float(age),float(ed),float(employ),float(address),float(income),float(debtinc),float(creddebt),float(othdebt))
+        if int(res) == 0:
+            props = {
+                "result" : "will not default",
+                "username":user_for_val,
+                'users':userdict
+            }
+        else:
+            props = {
+                "result" : "will default",
+                "username":user_for_val,
+                'users':userdict
+            }
+
+        return render_template("investorhomepage.html", props=props)
 
 @app.route('/invest', methods = ['GET', 'POST'])
 def invest():
