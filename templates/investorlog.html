@@ -1,20 +1,3 @@
-<!-- <html>
-    <head>
-        <title>Investor Log In/Sign Up</title>
-    </head>
-    <body>
-        <h1>Investor Log In/Sign Up</h1>
-        <p>{{session['error']}}<p>
-        <form method="POST" action="/investlogintomongo">
-            <label for="event_name">Username</label>
-            <input required type="text" name="username" value="">
-            <label for="event_date">Password </label>
-            <input required type="text" name="password" value="">
-            <input type="submit" value="Submit">
-        </form>
-    </body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -35,6 +18,23 @@
   <!-- Custom styles for this template-->
   <link href="/../static/css/sb-admin-2.min.css" rel="stylesheet">
 
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/../static/css/style.css?q={{time}}" crossorigin="anonymous">
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<a class="navbar-brand" href="/index">FundIt</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+	    <span class="navbar-toggler-icon"></span>
+	  </button>
+		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+			<div class="navbar-nav">
+		
+			</div>
+		</div>
+	</nav>
 </head>
 
 <body class="bg-gradient-primary">
@@ -58,17 +58,12 @@
                   </div>
                   <form class="user" method="POST" action="/investlogintomongo">
                     <div class="form-group">
-                      <input name = "username" class="form-control form-control-user" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Enter Username">
+                      <input name = "username" class="form-control form-control-user" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Username">
                     </div>
                     <div class="form-group">
                       <input name = "password" type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">
                     </div>
-                    <div class="form-group">
-                      <div class="custom-control custom-checkbox small">
-                        <input type="checkbox" class="custom-control-input" id="customCheck">
-                        <label class="custom-control-label" for="customCheck">Remember Me</label>
-                      </div>
-                    </div>
+            
                     <!-- <a href="index.html" class="btn btn-primary btn-user btn-block">
                       Login/Sign Up
                     </a> -->
@@ -82,9 +77,9 @@
                     </a> -->
                   </form>
                   <hr>
-                  <div class="text-center">
+                  <!-- <div class="text-center">
                      <p style="color:red;">{{session['error']}}<p>
-                  </div>
+                  </div> -->
                 </div>
               </div>
             </div>
@@ -108,5 +103,19 @@
   <script src="/../static/js/sb-admin-2.min.js"></script>
 
 </body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" id = "footer">
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+	    <span class="navbar-toggler-icon"></span>
+	  </button>
+	<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+		<div class="navbar-nav">
+
+            &copy; Copyright 2020 by FundIt
+​
+​
+		</div>
+	</div>
+    </nav>
 
 </html>
