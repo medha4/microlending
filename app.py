@@ -243,7 +243,8 @@ def invest():
                     }
                 }
                 )
-        return f"you have offered to invest ${str(request.form['investment'])} into {username}"
+        
+        session['res'] = f"you have offered to invest ${str(request.form['investment'])} into {username}"
 
 
 @app.route('/logout')

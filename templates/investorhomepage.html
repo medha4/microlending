@@ -533,12 +533,16 @@
                     </form>
 
                     {% if props.result == "will not default"%}
-                         <p>{{props.username}} {{props.result}}</p>
-                         <form method="POST" action="/invest">
-                            <label for="investment">Investment Value:</label><br> 
-                            <input type="text" id="investment" name="investment"><br>
-                            <input type="submit" value="Invest">
-                        </form>
+                        {% if props.update == ""%}
+                            <p>{{props.username}} {{props.result}}</p>
+                            <form method="POST" action="/invest">
+                                <label for="investment">Investment Value:</label><br> 
+                                <input type="text" id="investment" name="investment"><br>
+                                <input type="submit" value="Invest">
+                            </form>
+                        {% else %}
+                            <p>props.update</p>
+                        {%endif%}
                     {% endif %}
                 </div>
               </div>
