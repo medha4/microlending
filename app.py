@@ -1,6 +1,6 @@
 # ---- YOUR APP STARTS HERE ----
 # -- Import section --
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask import render_template
 from flask import request
 from bson.objectid import ObjectId
@@ -39,6 +39,7 @@ mongo = PyMongo(app)
 @app.route('/index')
 def index():
     session['error'] = ""
+    session['updates'] = ""
     return render_template("index.html")
 
 @app.route('/userlogin')
@@ -85,8 +86,16 @@ def investlogintomongo():
 def userhomepage():
     userinfo = mongo.db.userinfo
     money = list(userinfo.find({'username':session['username']}))[0]['invested']
+    print(list(userinfo.find({'username':session['username']}))[0]['invested'])
+    moneyreq = list(userinfo.find({'username':session['username']}))[0]['moneyreq']
+    investorinfo = mongo.db.investorinfo
+    investorsforcurruser = list(investorinfo.find({'project':session['username']}))
     props = {
-        "money":money
+        "money":"${:,.2f}".format(money),
+        "investorslist":investorsforcurruser,
+        "numinvestors":len(investorsforcurruser),
+        "moneyreq":"${:,.2f}".format(int(moneyreq)),
+        "progress": float(money)/float(moneyreq) * 100
     }
     return render_template("userhomepage.html",props=props)
 
@@ -103,7 +112,7 @@ def userlogintomongo():
     else:
         if not list(users.find({'username':given_username})):
             users.insert({"username" : given_username,"password": str(bcrypt.hashpw(given_password.encode('utf-8'), bcrypt.gensalt()), "utf-8")})
-            userinfo.insert({"username" : given_username,"age": 0,"ed":0,"employ":0,"address":0,"income":0,"debtinc":0,"creddebt":0,"othdebt":0,"invested":0})
+            userinfo.insert({"username" : given_username,"age": 0,"ed":0,"employ":0,"address":0,"income":0,"debtinc":0,"creddebt":0,"othdebt":0,"invested":0,"moneyreq":0})
             session['username'] = given_username
             return userhomepage()
         else:
@@ -137,21 +146,24 @@ def updateinfo():
         debtinc = request.form['debtinc']
         creddebt = request.form['creddebt']
         othdebt = request.form['othdebt']
+        moneyreq = request.form['moneyyouwant']
 
         if not list(userinfo.find({'username':username})):
-            userinfo.insert({"username" : username,"age": age,"ed":ed,"employ":employ,"address":address,"income":income,"debtinc":debtinc,"creddebt":creddebt,"othdebt":othdebt,"invested":0})
-            return "submitted"
+            userinfo.insert({"username" : username,"age": age,"ed":ed,"employ":employ,"address":address,"income":income,"debtinc":debtinc,"creddebt":creddebt,"othdebt":othdebt,"invested":0,"moneyreq":moneyreq})
+            session['updates'] = 'submitted'
         else:
             # idofuser = list(userinfo.find({'username':username})[0]['_id']
             userinfo.update(
                 { 'username': username },
                 { "$set":
                     {
-                        "age": age,"ed":ed,"employ":employ,"address":address,"income":income,"debtinc":debtinc,"creddebt":creddebt,"othdebt":othdebt
+                        "age": age,"ed":ed,"employ":employ,"address":address,"income":income,"debtinc":debtinc,"creddebt":creddebt,"othdebt":othdebt, "moneyreq":moneyreq
                     }
                 }
                 )
-            return "updated"
+            session['updates'] = 'updated'
+        return "<a href = '/userhomepage'>redirect</a>"
+        #return redirect(url_for("userhomepage")) UNCOMMENT THIS WHEN GOING TO HEROKU
 
 @app.route('/runanalysis', methods = ['GET', 'POST'])
 def runanalysis():
