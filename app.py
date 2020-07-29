@@ -43,10 +43,12 @@ def index():
 
 @app.route('/userlogin')
 def userlogin():
+    session['logout'] = ""
     return render_template("userlog.html")
 
 @app.route('/investorlogin')
 def investorlogin():
+    session['logout'] = ""
     return render_template("investorlog.html")
 
 @app.route('/investorhomepage')
@@ -220,7 +222,13 @@ def invest():
 @app.route('/logout')
 def logout():
     session.clear()
+    session['logout'] = "You have been logged out."
     return render_template('index.html')
+
+@app.errorhandler(404)
+def page_not_found(e):
+    session['logout'] = "404 error - page not found"
+    return render_template('index.html'), 404
 
 # testing block content just for funzies - ignore the test.html and base.html files in template for now
 # documentation: https://jinja.palletsprojects.com/en/2.11.x/templates/#child-template
