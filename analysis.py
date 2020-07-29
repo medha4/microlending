@@ -84,12 +84,12 @@ def predict(age,ed,employ,address,income,debtinc,creddebt,othdebt):
 
     #Data Exploratory Analysis¶
 
-    tstats_df = pd.DataFrame()
-    for num_variable in bankloans_existing.columns.difference(['default']):
-        tstats=stats.ttest_ind(bankloans_existing[bankloans_existing.default==1][num_variable],bankloans_existing[bankloans_existing.default==0][num_variable])
-        temp = pd.DataFrame([num_variable, tstats[0], tstats[1]]).T
-        temp.columns = ['Variable Name', 'T-Statistic', 'P-Value']
-        tstats_df = pd.concat([tstats_df, temp], axis=0, ignore_index=True)
+    # tstats_df = pd.DataFrame()
+    # for num_variable in bankloans_existing.columns.difference(['default']):
+    #     tstats=stats.ttest_ind(bankloans_existing[bankloans_existing.default==1][num_variable],bankloans_existing[bankloans_existing.default==0][num_variable])
+    #     temp = pd.DataFrame([num_variable, tstats[0], tstats[1]]).T
+    #     temp.columns = ['Variable Name', 'T-Statistic', 'P-Value']
+    #     tstats_df = pd.concat([tstats_df, temp], axis=0, ignore_index=True)
     # print(tstats_df)
 
     #visualization of data importance
