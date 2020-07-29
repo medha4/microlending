@@ -142,7 +142,7 @@
       </div>
 
       <!-- Nav Item - Pages Collapse Menu -->
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
           <i class="fas fa-fw fa-folder"></i>
           <span>Pages</span>
@@ -159,21 +159,21 @@
             <a class="collapse-item" href="blank.html">Blank Page</a>
           </div>
         </div>
-      </li>
+      </li> -->
 
       <!-- Nav Item - Charts -->
       <li class="nav-item">
-        <a class="nav-link" href="charts.html">
+        <a class="nav-link" href="#chart">
           <i class="fas fa-fw fa-chart-area"></i>
           <span>Charts</span></a>
       </li>
 
-      <!-- Nav Item - Tables -->
+      <!-- Nav Item - Tables
       <li class="nav-item">
         <a class="nav-link" href="tables.html">
           <i class="fas fa-fw fa-table"></i>
           <span>Tables</span></a>
-      </li>
+      </li> -->
 
       <!-- Divider -->
       <hr class="sidebar-divider d-none d-md-block">
@@ -393,8 +393,8 @@
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Fundings </div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Goal Fundings </div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{props.moneyreq}}</div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -410,8 +410,8 @@
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Earnings (Annual)</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">All Time Funds</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{props.money}}</div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -427,14 +427,14 @@
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks</div>
+                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Progress</div>
                       <div class="row no-gutters align-items-center">
                         <div class="col-auto">
-                          <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
+                          <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{props.progress}}%</div>
                         </div>
                         <div class="col">
                           <div class="progress progress-sm mr-2">
-                            <div class="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-info" role="progressbar" style="width: {{props.progress}}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                         </div>
                       </div>
@@ -453,8 +453,8 @@
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pending Requests</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Investor Requests</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{props.numinvestors}}</div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-comments fa-2x text-gray-300"></i>
@@ -470,7 +470,7 @@
           <div class="row">
 
             <!-- Area Chart -->
-            <div class="col-xl-8 col-lg-7">
+            <div class="col-xl-8 col-lg-7" id="chart">
               <div class="card shadow mb-4">
                 <!-- Card Header - Dropdown -->
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -522,15 +522,19 @@
                     <canvas id="myPieChart"></canvas>
                   </div>
                   <div class="mt-4 text-center small">
-                    <span class="mr-2">
-                      <i class="fas fa-circle text-primary"></i> Direct
+
+                    {% for investor in props.investorslist %}
+                        <span class="mr-2">
+                      <i class="fas fa-circle text-primary"></i> {{ investor['investor'] }}
+                    </span>
+                    {% endfor %}
+                    
+                    <!-- <span class="mr-2">
+                      <i class="fas fa-circle text-success"></i> Investor 2
                     </span>
                     <span class="mr-2">
-                      <i class="fas fa-circle text-success"></i> Social
-                    </span>
-                    <span class="mr-2">
-                      <i class="fas fa-circle text-info"></i> Referral
-                    </span>
+                      <i class="fas fa-circle text-info"></i> Investor 3
+                    </span> -->
                   </div>
                 </div>
               </div>
@@ -541,10 +545,10 @@
           <div class="row">
 
             <!-- Content Column -->
-            <div class="col-lg-6 mb-4">
+            <!-- <div class="col-lg-6 mb-4"> -->
 
               <!-- Project Card Example -->
-              <div class="card shadow mb-4">
+              <!-- <div class="card shadow mb-4">
                 <div class="card-header py-3">
                   <h6 class="m-0 font-weight-bold text-primary">Projects</h6>
                 </div>
@@ -570,81 +574,12 @@
                     <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
-              <!-- Color System
-              <div class="row">
-                <div class="col-lg-6 mb-4">
-                  <div class="card bg-primary text-white shadow">
-                    <div class="card-body">
-                      Primary
-                      <div class="text-white-50 small">#4e73df</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                  <div class="card bg-success text-white shadow">
-                    <div class="card-body">
-                      Success
-                      <div class="text-white-50 small">#1cc88a</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                  <div class="card bg-info text-white shadow">
-                    <div class="card-body">
-                      Info
-                      <div class="text-white-50 small">#36b9cc</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                  <div class="card bg-warning text-white shadow">
-                    <div class="card-body">
-                      Warning
-                      <div class="text-white-50 small">#f6c23e</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                  <div class="card bg-danger text-white shadow">
-                    <div class="card-body">
-                      Danger
-                      <div class="text-white-50 small">#e74a3b</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                  <div class="card bg-secondary text-white shadow">
-                    <div class="card-body">
-                      Secondary
-                      <div class="text-white-50 small">#858796</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                  <div class="card bg-light text-black shadow">
-                    <div class="card-body">
-                      Light
-                      <div class="text-black-50 small">#f8f9fc</div>
-                    </div>
-                  </div>
-              </div>
-              <div class="col-lg-6 mb-4">
-                <div class="card bg-dark text-white shadow">
-                  <div class="card-body">
-                      Dark
-                      <div class="text-white-50 small">#5a5c69</div>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            </div> -->
+            <div class="col-lg-36 mb-4" style="margin-left:100px">
 
-            <div class="col-lg-6 mb-4">
-
-              <!-- Illustrations -->
+              <!-- learn about loans -->
               <div class="card shadow mb-4" id = "learn">
                 <div class="card-header py-3">
                   <h6 class="m-0 font-weight-bold text-primary">Learn about Loan Programs</h6>
@@ -658,33 +593,39 @@
                   <a target="_blank" rel="nofollow" href="https://corporatefinanceinstitute.com/resources/knowledge/credit/purpose-of-credit-risk-analysis/#:~:text=Summary-,Credit%20risk%20analysis%20is%20a%20form%20of%20analysis%20performed%20by,the%20lender%20is%20exposed%20to.">Learn more &rarr;</a>
                 </div>
               </div>
-
-              <!-- Approach -->
+            
+              <!-- settings -->
               <div class="card shadow mb-4" id="settings">
                 <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Settings</h6>
+                  <h6 class="m-0 font-weight-bold text-primary">Risk Analysis Settings</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="text-align:center;">
+                <!-- <img src="/../static/images/investpicture.png" width="300px"> -->
+                <div>
                   <p><form method="POST" action="/updateinfo">
-                    <label for="age">Age:</label><br>  <!--age - Age of Customer-->
+                    <label for="age" style="display: inline-block; width: 100px; text-align: right;">Age:</label>  <!--age - Age of Customer-->
                     <input type="text" id="age" name="age"><br> 
-                    <label for="ed">Education Level:</label><br><!--ed - Education level of customer-->
+                    <label for="ed" style="display: inline-block; width: 100px; text-align: right;">Education Level:</label><!--ed - Education level of customer-->
                     <input type="text" id="ed" name="ed"><br>
-                    <label for="employ">Tenure with current employer (in years):</label><br><!-- # employ: Tenure with current employer (in years) -->
+                    <label for="employ" style="display: inline-block; width: 100px; text-align: right;">Tenure with current employer (in years):</label><!-- # employ: Tenure with current employer (in years) -->
                     <input type="text" id="employ" name="employ"><br>
-                    <label for="address">Number of years in same address:</label><br><!-- # address: Number of years in same address -->
+                    <label for="address" style="display: inline-block; width: 100px; text-align: right;">Number of years in same address:</label><!-- # address: Number of years in same address -->
                     <input type="text" id="address" name="address"><br>
-                    <label for="income">Income:</label><br> <!-- # income: Customer Income -->
+                    <label for="income" style="display: inline-block; width: 100px; text-align: right;">Income:</label> <!-- # income: Customer Income -->
                     <input type="text" id="income" name="income"><br>
-                    <label for="debtinc">Debt to Income Ratio:</label><br> <!-- # debtinc: Debt to income ratio -->
+                    <label for="debtinc" style="display: inline-block; width: 100px; text-align: right;">Debt to Income Ratio:</label> <!-- # debtinc: Debt to income ratio -->
                     <input type="text" id="debtinc" name="debtinc"><br>
-                    <label for="creddebt">Credit to Debt Ratio:</label><br> <!-- # creddebt: Credit to Debt ratio -->
+                    <label for="creddebt" style="display: inline-block; width: 100px; text-align: right;">Credit to Debt Ratio:</label><!-- # creddebt: Credit to Debt ratio -->
                     <input type="text" id="creddebt" name="creddebt"><br>
-                    <label for="othdebt">Other debts:</label><br> <!-- # othdebt: Other debts -->
+                    <label for="othdebt" style="display: inline-block; width: 100px; text-align: right;">Other debts:</label> <!-- # othdebt: Other debts -->
                     <input type="text" id="othdebt" name="othdebt"><br>
-                    <input type="submit" value="Submit">
+                    <label for="moneyyouwant" style="display: inline-block; width: 100px; text-align: right;">Total Funds Requested:</label> <!-- # moneyyouwant -->
+                    <input type="text" id="moneyyouwant" name="moneyyouwant"><br><br>
+                    <input type="submit" value="Submit" class="btn btn-primary btn-user btn-block">
+                    
                 </form></p>
-                  
+                <p style="color:red;">{{session['updates']}}</p>
+                <div>
                 </div>
               </div>
 
