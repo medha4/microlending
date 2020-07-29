@@ -109,7 +109,8 @@ def predict(age,ed,employ,address,income,debtinc,creddebt,othdebt):
         binned = pd.cut(bankloans_existing[num_variable], bins=10, labels=list(range(1,11)))
         binned = binned.dropna()
         ser = bankloans_existing.groupby(binned)['default'].sum() / (bankloans_existing.groupby(binned)['default'].count()-bankloans_existing.groupby(binned)['default'].sum())
-        ser = np.log(ser)
+        if ser > 0:
+            ser = np.log(ser)
         fig,axes = plt.subplots(figsize=(10,4))
         sns.barplot(x=ser.index,y=ser)
         plt.ylabel('Log Odds Ratio')
