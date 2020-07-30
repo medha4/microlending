@@ -36,6 +36,7 @@ mongo = PyMongo(app)
 def index():
     session['error'] = ""
     session['updates'] = ""
+    session['creditriskanalysisres'] = -1
     return render_template("index.html")
 
 @app.route('/userlogin')
@@ -285,7 +286,7 @@ def invest():
                 "result" : session['creditriskanalysisres'],
                 "username":session['username'],
                 'users':userdict,
-                'input':f"${str(request.form['investment'])}",
+                'input':f"you have invested ${str(request.form['investment'])}",
                 'num':numinvested,
             'projlist':proj_list,
             'total':total_money_spent
@@ -302,6 +303,7 @@ def logout():
 @app.errorhandler(404)
 def page_not_found(e):
     session['logout'] = "404 error - page not found"
+    
     return render_template('index.html'), 404
 
 # testing block content just for funzies - ignore the test.html and base.html files in template for now
