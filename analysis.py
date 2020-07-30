@@ -9,7 +9,6 @@ import pandas_profiling   #need to install using anaconda prompt (pip install pa
 
 #change/diversify dataset https://www.listendata.com/2019/08/datasets-for-credit-risk-modeling.html
 
-#show auc roc curve to be cool - shows false postivites - can export it as html or as an image - model won't change
 
 # plt.rcParams['figure.figsize'] = 10, 7.5
 # plt.rcParams['axes.grid'] = True

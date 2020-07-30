@@ -423,7 +423,7 @@
 
                     {% if session['creditriskanalysisres'] == 0%}
                         {% if session['updates'] == ""%}
-                            <!-- <p>{{props.username}} {{props.result}}</p> -->
+                            <p>The User will not default</p>
                             <form method="POST" action="/invest">
                                 <label for="investment">Investment Value:</label><br> 
                                 <input type="text" id="investment" name="investment"><br>
@@ -433,7 +433,7 @@
                             <p>{{session['updates']}}</p>
                         {%endif%}
                     {% endif %}
-                    <p>you have invested {{props.input}}</p>
+                    <p>{{props.input}}</p>
                 </div>
                 
               </div>
