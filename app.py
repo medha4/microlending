@@ -10,10 +10,6 @@ from flask import session
 import analysis
 import bcrypt
 
-#NOTES:
-# things to do:
-# - show all the investors on the users page
-# - allow investor to add more money to his or her investment
 
 
 # -- Initialization section --
@@ -56,7 +52,21 @@ def investorlogin():
 def investorhomepage():
     users_collection=mongo.db.users
     userdict= list(users_collection.find({}))
-    props = {'users':userdict}
+    
+    investorinfo = mongo.db.investorinfo
+    projectsinvestedin = list(investorinfo.find({'investor':session['username']}))
+    numinvested = len(projectsinvestedin)
+    proj_list = []
+    total_money_spent = 0
+    for item in projectsinvestedin:
+        proj_list.append(item['project'])
+        total_money_spent+= float(item['invested'])
+
+
+    props = {'users':userdict,
+            'num':numinvested,
+            'projlist':proj_list,
+            'total':total_money_spent}
     return render_template("investorhomepage.html", props=props)
 
 @app.route('/investlogintomongo', methods = ['GET', 'POST'])
@@ -194,19 +204,36 @@ def runanalysis():
         users_collection=mongo.db.users
         userdict= list(users_collection.find({}))
 
+        investorinfo = mongo.db.investorinfo
+        projectsinvestedin = list(investorinfo.find({'investor':session['username']}))
+        numinvested = len(projectsinvestedin)
+        proj_list = []
+        total_money_spent = 0
+        for item in projectsinvestedin:
+            proj_list.append(item['project'])
+            total_money_spent+= float(item['invested'])
+
         res = analysis.predict(float(age),float(ed),float(employ),float(address),float(income),float(debtinc),float(creddebt),float(othdebt))
+        session['creditriskanalysisres'] = res
         if int(res) == 0:
             props = {
                 "result" : "will not default",
                 "username":user_for_val,
-                'users':userdict
+                'users':userdict,
+                'num':numinvested,
+            'projlist':proj_list,
+            'total':total_money_spent
             }
         else:
             props = {
                 "result" : "will default",
                 "username":user_for_val,
-                'users':userdict
+                'users':userdict,
+                'num':numinvested,
+            'projlist':proj_list,
+            'total':total_money_spent
             }
+
 
         return render_template("investorhomepage.html", props=props)
 
@@ -243,9 +270,28 @@ def invest():
                     }
                 }
                 )
-        
-        session['res'] = f"you have offered to invest ${str(request.form['investment'])} into {username}"
+        users_collection=mongo.db.users
+        userdict= list(users_collection.find({}))
 
+        projectsinvestedin = list(investorinfo.find({'investor':session['username']}))
+        numinvested = len(projectsinvestedin)
+        proj_list = []
+        total_money_spent = 0
+        for item in projectsinvestedin:
+            proj_list.append(item['project'])
+            total_money_spent+= float(item['invested'])
+
+        props = {
+                "result" : session['creditriskanalysisres'],
+                "username":session['username'],
+                'users':userdict,
+                'input':f"${str(request.form['investment'])}",
+                'num':numinvested,
+            'projlist':proj_list,
+            'total':total_money_spent
+                }
+
+        return render_template("investorhomepage.html", props=props)
 
 @app.route('/logout')
 def logout():
